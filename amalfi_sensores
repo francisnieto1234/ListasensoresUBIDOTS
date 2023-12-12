@@ -1,0 +1,84 @@
+// Obtén el elemento canvas
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+
+// Objeto de nombres y URLs
+var nombres = {
+    "Pluviometro di Amalfi": "https://iot.arantec.com/app/dashboards/65684309942d9100512a82db",
+    "Pluviometro di Agerola": "https://iot.arantec.com/app/dashboards/656842e113b2810052eb504c",
+    "Pluviometro di Pogerola": "https://iot.arantec.com/app/dashboards/65684285885ee90052f7731c",
+    "Umidità del suolo di Amalfi": "https://iot.arantec.com/app/dashboards/6560b9e8c4222f000e810352",
+    "Nivello delle rio di Amalfi": "https://iot.arantec.com/app/dashboards/6560b9e8c4222f000e810352"
+};
+
+var alturaTexto = 20; // Altura del texto en píxeles
+var espacioEntreNombres = 30; // Espacio vertical total para cada nombre
+
+// Función para dibujar los nombres
+function dibujarNombres(hoverIndex) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpia el canvas
+    Object.keys(nombres).forEach(function(nombre, index){
+        var y = espacioEntreNombres * (index + 1);
+
+        // Dibujar fondo si el ratón está encima
+        if (index === hoverIndex) {
+            ctx.fillStyle = "lightgray"; // Color de fondo cuando el ratón está encima
+            ctx.fillRect(0, y - alturaTexto, canvas.width, alturaTexto);
+        }
+
+        // Dibujar texto
+        ctx.fillStyle = "black"; // Color del texto
+        ctx.font = alturaTexto + "px Arial";
+        ctx.fillText(nombre, 10, y);
+    });
+}
+
+// Inicialmente dibuja los nombres sin ningún fondo destacado
+dibujarNombres(-1);
+
+canvas.addEventListener('mousemove', function(event) {
+    var rect = canvas.getBoundingClientRect();
+    var y = event.clientY - rect.top;
+    var nombresKeys = Object.keys(nombres);
+    var hoveredIndex = -1;
+
+    // Determinar si el ratón está sobre algún nombre
+    for (var i = 0; i < nombresKeys.length; i++) {
+        var nombreY = espacioEntreNombres * (i + 1);
+        if (y > nombreY - alturaTexto && y < nombreY) {
+            hoveredIndex = i;
+            break;
+        }
+    }
+
+    // Cambiar el cursor y redibujar si es necesario
+    if (hoveredIndex !== -1) {
+        canvas.style.cursor = 'pointer';
+    } else {
+        canvas.style.cursor = 'default';
+    }
+
+    // Redibujar los nombres con o sin fondo destacado
+    dibujarNombres(hoveredIndex);
+});
+
+canvas.addEventListener('click', function(event) {
+    var rect = canvas.getBoundingClientRect();
+    var y = event.clientY - rect.top;
+    var nombresKeys = Object.keys(nombres);
+    var clickedIndex = -1;
+
+    // Determinar si se ha hecho clic en algún nombre
+    for (var i = 0; i < nombresKeys.length; i++) {
+        var nombreY = espacioEntreNombres * (i + 1);
+        if (y > nombreY - alturaTexto && y < nombreY) {
+            clickedIndex = i;
+            break;
+        }
+    }
+
+    if (clickedIndex !== -1) {
+        var clickedName = nombresKeys[clickedIndex];
+        window.open(nombres[clickedName], '_blank');
+    }
+});

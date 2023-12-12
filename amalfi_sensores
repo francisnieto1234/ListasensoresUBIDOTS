@@ -82,3 +82,8 @@ canvas.addEventListener('click', function(event) {
         window.open(nombres[clickedName], '_blank');
     }
 });
+// Manejador para cuando el ratón sale del área del canvas
+canvas.addEventListener('mouseleave', function() {
+    // Redibujar los nombres sin ningún fondo destacado
+    dibujarNombres(-1);
+});
